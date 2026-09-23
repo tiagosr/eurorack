@@ -78,6 +78,15 @@ class WSOLASamplePlayer {
     env_phase_ = 0.0f;
     env_phase_increment_ = 0.5f;
     elapsed_ = 0;
+
+    // Force the first LoadCorrelator() after Init() to actually load sign
+    // bits and StartSearch: with correlator_loaded_ = true it no-ops and
+    // the first window is scheduled from an unsearched (uninitialized or
+    // stale) correlator, i.e. a garbage best_match() — audible as a
+    // scrambled/glitched start on every (re)trigger. (trackerjolo-v found
+    // this while driving the player as one-shots; see clouds/dsp/ and the
+    // tracker's T24 order test.)
+    correlator_loaded_ = false;
   }
   
   template<Resolution resolution>
